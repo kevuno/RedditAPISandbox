@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<!--
+  Stuart Powers
+  http://sente.cc/
+  http://twitter.com/stuartpowers
+-->
+
+<html>
+  <head>
+    <script src="http://j.mp/jqymin"></script>
+    <title>Leaderboard</title>
+     <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
+  </head>
+
+  <body>
+      <section>
+          <div class="container ">
+                <div class="inspired"><h3>Inspired by  <a href="#">a </a>  post</h3></div>
+
+                <div class="rules light-blue lighten-3">
+                    <h2>This is how it works:</h2>
+                    <p>
+                        This app will get all the unique users in <a href="https://www.reddit.com/r/AskReddit/comments/2np694/what_tasty_food_would_be_distusting_if_eaten_over/">this</a>
+                        reddit post and I will do some nice stats from it.
+                        <br\>
+                        Such data obtain will include: <br>
+
+                        <ol>
+                            <li>Username</li>
+                            <li>Badge counter</li>
+                            <li>Most voted comment</li>
+                            <li>Rank compared to other users</li>
+                        </ol>
+
+                    </p>
+                    <p>So far it only gets 9 comments so it is still a work in progress</p>
+                </div>
+
+                <div id="reddit-content">
+                </div>
+          </div>
+      </section>
+    
+
+    <script>
+        var uniqueUsers = {};
+
+        function createUserObj(username,timeRecord){
+            return {
+                username,timeRecord
+            }
+
+        }
+        var key = function(obj){
+            // some unique object-dependent key
+            return obj.username;
+        };
+
+
+      $.getJSON(
+        "https://www.reddit.com/r/AskReddit/comments/2np694/what_tasty_food_would_be_distusting_if_eaten_over/.json?jsonp=",
+        function foo(data)
+        {
+            console.log(data);
+          $.each(
+            data[1].data.children.slice(0, 10),
+            function (i, comment) {
+                //Creat ehte objects and save them into a map
+                uniqueUsers[createUserObj(comment.data.author,comment.data.author_flair_text)] = comment.data;
+                $("#reddit-content").append( '<h3> Comment ' + i + '</h3>' );
+                $("#reddit-content").append( '<br> Username: ' + comment.data.author );
+                $("#reddit-content").append( '<br> Flair: ' + comment.data.author_flair_text );
+                $("#reddit-content").append( '<br> Comment <span>' + comment.data.body +'</span>' );
+                $("#reddit-content").append( '<br> Upvotes: ' + comment.data.ups );
+                $("#reddit-content").append( '<hr>' );
+            }
+          )
+        }
+      )
+      .success(function() { alert("Final success"); })
+    </script>
+
+  </body>
+</html>
